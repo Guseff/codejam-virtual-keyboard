@@ -1,5 +1,83 @@
-.desk {
+.workspace {
   width: 800px;
   margin: 20px auto;
+}
+
+.workspace textarea {
+  height:240px;
+}
+
+.desk {
+  height: 250px;
+  margin: 20px auto;
+  padding: 100px 20px 30px 20px;
   display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(169, 169, 169);
+  border-radius: 10px;
+  background: linear-gradient(to top, rgb(169, 169, 169), rgb(169, 169, 169) 80%, #eee 92%, rgb(169, 169, 169) 100%);
+}
+
+.row {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.key {
+  margin-top: 5px;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e6e6e6;
+  border: 2px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.active {
+  background-color: darkolivegreen;
+}
+
+.del {
+  width: 80px;
+}
+
+.tab {
+  width: 60px;
+}
+
+.caps {
+  width: 70px;
+}
+
+.enter {
+  width: 95px;
+}
+
+.l-shift {
+  width: 60px;
+}
+
+.arr-up {
+  margin-left: 12px;
+}
+
+.r-shift {
+  width: 90px;
+  margin-left: 8px
+}
+
+.service {
+  width: 50px;
+}
+
+.space {
+  width: 300px;
 }
