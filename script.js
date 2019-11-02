@@ -90,7 +90,7 @@ class Key extends HTMLElement {
     this.setAttribute('id', key.code);
     this.setAttribute('data', key.label);
     if ('ext' in key) this.classList.add(key.ext);
-    this.innerHTML = `<span>${key.label}</span>`;
+    this.innerHTML = key.label;
   }
 }
 
@@ -103,6 +103,18 @@ keys.forEach(el => {
 
 document.addEventListener('keydown', kbdHandle);
 
+document.addEventListener('click', mouseHandle);
+
+function mouseHandle(e) {
+  e.preventDefault();
+  let kn = e.target;
+  if (kn instanceof Key) {
+    let text = kn.getAttribute('data');
+    textarea.value += text;
+    anime(kn, 'tiny');
+  }
+}
+
 function kbdHandle(e) {
   e.preventDefault();
   let text = e.key;
@@ -110,10 +122,10 @@ function kbdHandle(e) {
   textarea.value += text;
   
   let key = document.getElementById(e.code);
-  if (key) anime(key);
+  if (key) anime(key, 'active');
 }
 
-function anime(el) {
-  el.classList.add('active');
-  setTimeout(() => el.classList.remove('active'), 300);
+function anime(el, cl) {
+  el.classList.add(cl);
+  setTimeout(() => el.classList.remove(cl), 300);
 }
