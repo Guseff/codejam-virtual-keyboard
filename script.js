@@ -120,7 +120,6 @@ class Key extends HTMLElement {
     super();
     this.setAttribute('class', 'key');
     this.setAttribute('id', key.code);
-    this.setAttribute('data', key.label);
     if ('ext' in key) {
       this.classList.add(key.ext);
     }
@@ -155,33 +154,43 @@ function checkCaps(id) {
   renderKeyboard(keys);
 }
 
-function mouseHandle(e) {
-  e.preventDefault();
-  const kn = e.target;
+function printLetter(kn, cl) {
   if (kn instanceof Key) {
     const id = kn.getAttribute('id');
 
     checkCaps(id);
+    if (id !== 'ShiftLeft' && id !== 'ControlLeft' && id !== 'CapsLock') {
+      if (id === 'Backspace') {
+        textarea.value = textarea.value.slice(0, -1);
+      } else if (id === 'Space') {
+        textarea.value += ' ';
+      } else if (id === 'Tab') {
+        textarea.value += '    ';
+      } else if (id === 'Enter') {
+        textarea.value += '\n';
+      } else {
+        textarea.value += kn.innerText;
+      }
+    }
 
-    textarea.value += kn.innerText;
-    anime(kn, 'tiny');
+    anime(kn, cl);
   }
+}
+
+function mouseHandle(e) {
+  e.preventDefault();
+  const kn = e.target;
+  printLetter(kn, 'active');
 }
 
 function kbdHandle(e) {
   e.preventDefault();
-  const text = e.key;
-
-  checkCaps(text);
+  const kn = document.getElementById(e.code);
   if (e.code === 'ShiftLeft' && (e.ctrlKey || e.metaKey)) {
     toggleStorageItem('isEnglish');
     renderKeyboard(keys);
   }
-
-  textarea.value += text;
-
-  const key = document.getElementById(e.code);
-  if (key) anime(key, 'active');
+  printLetter(kn, 'tiny');
 }
 
 const initStorage = () => {
