@@ -1,18 +1,3 @@
-const workspace = document.createElement('div');
-workspace.classList.add('workspace');
-document.body.prepend(workspace);
-
-const textarea = document.createElement('textarea');
-textarea.setAttribute('id', 'textarea');
-textarea.setAttribute('cols', '111');
-textarea.setAttribute('rows', '5');
-workspace.append(textarea);
-
-const desk = document.createElement('div');
-desk.setAttribute('id', 'desk');
-desk.classList.add('desk');
-workspace.append(desk);
-
 const keys = [
   { code: 'Backquote', label: [['`', '`'], ['ё', 'Ё']] },
   { code: 'Digit1', label: '1' },
@@ -83,22 +68,63 @@ const keys = [
   { code: 'ControlRight', label: 'Ctrl', ext: 'service' },
 ];
 
+const createWorkspace = () => {
+  const el = document.createElement('div');
+  el.classList.add('workspace');
+
+  return el;
+};
+
+const createTextarea = () => {
+  const el = document.createElement('textarea');
+  el.setAttribute('id', 'textarea');
+  el.setAttribute('cols', '111');
+  el.setAttribute('rows', '5');
+
+  return el;
+};
+
+const createDesk = () => {
+  const el = document.createElement('div');
+  el.setAttribute('id', 'desk');
+  el.classList.add('desk');
+
+  return el;
+};
+
+const workspace = createWorkspace();
+document.body.prepend(workspace);
+
+const textarea = createTextarea();
+const desk = createDesk();
+
+workspace.append(textarea);
+workspace.append(desk);
+
+function renderKey(key) {
+  let res;
+  if (Array.isArray(key.label)) {
+    if (localStorage.getItem('isEnglish') === 'true') {
+      res = localStorage.getItem('isCaps') === 'false' ? key.label[0][0] : key.label[0][1];
+    } else {
+      res = localStorage.getItem('isCaps') === 'false' ? key.label[1][0] : key.label[1][1];
+    }
+  } else {
+    res = key.label;
+  }
+  return res;
+}
+
 class Key extends HTMLElement {
   constructor(key) {
     super();
     this.setAttribute('class', 'key');
     this.setAttribute('id', key.code);
     this.setAttribute('data', key.label);
-    if ('ext' in key) this.classList.add(key.ext);
-    if (Array.isArray(key.label)) {
-      if (localStorage.getItem('lang') === 'en') {
-        this.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[0][0] : key.label[0][1];
-      } else {
-        this.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[1][0] : key.label[1][1];
-      }
-    } else {
-      this.innerHTML = key.label;
+    if ('ext' in key) {
+      this.classList.add(key.ext);
     }
+    this.innerHTML = renderKey(key);
   }
 }
 
@@ -107,30 +133,26 @@ function anime(el, cl) {
   setTimeout(() => el.classList.remove(cl), 300);
 }
 
-function renderKey(arr) {
+function renderKeyboard(arr) {
   arr.forEach((key) => {
     const el = document.getElementById(key.code);
-    if (Array.isArray(key.label)) {
-      if (localStorage.getItem('lang') === 'en') {
-        el.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[0][0] : key.label[0][1];
-      } else {
-        el.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[1][0] : key.label[1][1];
-      }
-    } else {
-      el.innerHTML = key.label;
-    }
+    el.innerHTML = renderKey(key);
   });
 }
 
-function checkCaps(id) {
-  if (id === 'CapsLock') {
-    if (localStorage.getItem('caps') === 'false') {
-      localStorage.setItem('caps', 'true');
-    } else {
-      localStorage.setItem('caps', 'false');
-    }
-    renderKey(keys);
+function toggleStorageItem(item) {
+  if (localStorage.getItem(item) === 'false') {
+    localStorage.setItem(item, 'true');
+  } else {
+    localStorage.setItem(item, 'false');
   }
+}
+
+function checkCaps(id) {
+  if (id !== 'CapsLock') return;
+
+  toggleStorageItem('isCaps');
+  renderKeyboard(keys);
 }
 
 function mouseHandle(e) {
@@ -152,12 +174,8 @@ function kbdHandle(e) {
 
   checkCaps(text);
   if (e.code === 'ShiftLeft' && (e.ctrlKey || e.metaKey)) {
-    if (localStorage.getItem('lang') === 'en') {
-      localStorage.setItem('lang', 'ru');
-    } else {
-      localStorage.setItem('lang', 'en');
-    }
-    renderKey(keys);
+    toggleStorageItem('isEnglish');
+    renderKeyboard(keys);
   }
 
   textarea.value += text;
@@ -166,15 +184,24 @@ function kbdHandle(e) {
   if (key) anime(key, 'active');
 }
 
+const initStorage = () => {
+  if (!localStorage.getItem('isEnglish')) {
+    localStorage.setItem('isEnglish', 'true');
+  }
+  localStorage.setItem('isCaps', 'false');
+};
+
+const createKeyboard = (kbd, arr) => {
+  arr.forEach((el) => {
+    const a = new Key(el);
+    kbd.append(a);
+  });
+};
+
+initStorage();
+
 customElements.define('key-el', Key);
-
-if (!localStorage.getItem('lang')) localStorage.setItem('lang', 'en');
-localStorage.setItem('caps', 'false');
-
-keys.forEach((el) => {
-  const a = new Key(el);
-  desk.append(a);
-});
+createKeyboard(desk, keys);
 
 document.addEventListener('keydown', kbdHandle);
 document.addEventListener('click', mouseHandle);
