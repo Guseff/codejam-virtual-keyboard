@@ -30,16 +30,16 @@ let keys = [
   {code: 'Backspace', label: '\<\-', ext: 'del'},
   
   {code: 'Tab', label: 'Tab', ext: 'tab'},
-  {code: 'KeyQ', label: 'q'},
-  {code: 'KeyW', label: 'w'},
-  {code: 'KeyE', label: 'e'},
-  {code: 'KeyR', label: 'r'},
-  {code: 'KeyT', label: 't'},
-  {code: 'KeyY', label: 'y'},
-  {code: 'KeyU', label: 'u'},
-  {code: 'KeyI', label: 'i'},
-  {code: 'KeyO', label: 'o'},
-  {code: 'KeyP', label: 'p'},
+  {code: 'KeyQ', label: [['q','Q'],['й','Й']]},
+  {code: 'KeyW', label: [['w','W'],['й','Ц']]},
+  {code: 'KeyE', label: [['e','E'],['й','У']]},
+  {code: 'KeyR', label: [['r','R'],['й','К']]},
+  {code: 'KeyT', label: [['t','T'],['й','Е']]},
+  {code: 'KeyY', label: [['y','Y'],['й','Н']]},
+  {code: 'KeyU', label: [['u','U'],['й','Г']]},
+  {code: 'KeyI', label: [['i','I'],['й','Ш']]},
+  {code: 'KeyO', label: [['o','O'],['й','Щ']]},
+  {code: 'KeyP', label: [['p','P'],['й','З']]},
   {code: 'BracketLeft', label: '\{'},
   {code: 'BracketRight', label: '\}'},
   {code: 'Backslash', label: '\\', ext: 'tab'},
@@ -90,11 +90,37 @@ class Key extends HTMLElement {
     this.setAttribute('id', key.code);
     this.setAttribute('data', key.label);
     if ('ext' in key) this.classList.add(key.ext);
-    this.innerHTML = key.label;
+    if (Array.isArray(key.label)) {
+      if (localStorage.getItem('lang') === 'en') {
+        this.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[0][0] : key.label[0][1];
+      } else {
+        this.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[1][0] : key.label[1][1];
+      }
+    } else {
+      this.innerHTML = key.label;
+    }
   }
 }
 
+function renderKey(keys, lang, caps) {
+  keys.forEach(key => {
+    let el = document.getElementById(key.code);
+    if (Array.isArray(key.label)) {
+      if (localStorage.getItem('lang') === 'en') {
+        el.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[0][0] : key.label[0][1];
+      } else {
+        el.innerHTML = localStorage.getItem('caps') === 'false' ? key.label[1][0] : key.label[1][1];
+      }
+    } else {
+      el.innerHTML = key.label;
+    }
+  })
+}
+
 customElements.define('key-el', Key);
+
+if (!localStorage.getItem('lang')) localStorage.setItem('lang', 'en');
+localStorage.setItem('caps', 'false');
 
 keys.forEach(el => {
   let a = new Key(el);
@@ -105,12 +131,28 @@ document.addEventListener('keydown', kbdHandle);
 
 document.addEventListener('click', mouseHandle);
 
+function checkCaps(id) {
+  if (id === 'CapsLock') {
+    if (localStorage.getItem('caps') === 'false') {
+      localStorage.setItem('caps', 'true');
+    } else {
+      localStorage.setItem('caps', 'false');
+    }
+    renderKey(keys);
+  }
+}
+
+
+
 function mouseHandle(e) {
   e.preventDefault();
   let kn = e.target;
   if (kn instanceof Key) {
-    let text = kn.getAttribute('data');
-    textarea.value += text;
+    let id = kn.getAttribute('id');
+
+    checkCaps(id);
+
+    textarea.value += kn.innerText;
     anime(kn, 'tiny');
   }
 }
@@ -118,6 +160,8 @@ function mouseHandle(e) {
 function kbdHandle(e) {
   e.preventDefault();
   let text = e.key;
+
+  checkCaps(text);
 
   textarea.value += text;
   
