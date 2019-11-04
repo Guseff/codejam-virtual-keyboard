@@ -68,6 +68,8 @@ const keys = [
   { code: 'ControlRight', label: 'Ctrl', ext: 'service' },
 ];
 
+let isShift = false;
+
 const createWorkspace = () => {
   const el = document.createElement('div');
   el.classList.add('workspace');
@@ -104,10 +106,11 @@ workspace.append(desk);
 function renderKey(key) {
   let res;
   if (Array.isArray(key.label)) {
+    let isUp = (localStorage.getItem('isCaps') === 'true') !== isShift;
     if (localStorage.getItem('isEnglish') === 'true') {
-      res = localStorage.getItem('isCaps') === 'false' ? key.label[0][0] : key.label[0][1];
+      res = isUp ? key.label[0][1] : key.label[0][0];
     } else {
-      res = localStorage.getItem('isCaps') === 'false' ? key.label[1][0] : key.label[1][1];
+      res = isUp ? key.label[1][1] : key.label[1][0];
     }
   } else {
     res = key.label;
@@ -159,20 +162,19 @@ function printLetter(kn, cl) {
     const id = kn.getAttribute('id');
 
     checkCaps(id);
-    if (id !== 'ShiftLeft' && id !== 'ControlLeft' && id !== 'CapsLock') {
-      if (id === 'Backspace') {
-        textarea.value = textarea.value.slice(0, -1);
-      } else if (id === 'Space') {
-        textarea.value += ' ';
-      } else if (id === 'Tab') {
-        textarea.value += '    ';
-      } else if (id === 'Enter') {
-        textarea.value += '\n';
-      } else {
-        textarea.value += kn.innerText;
-      }
+    if (id === 'ShiftLeft' || id === 'ControlLeft' || id === 'CapsLock') {
+      textarea.value += '';
+    } else if (id === 'Backspace') {
+      textarea.value = textarea.value.slice(0, -1);
+    } else if (id === 'Space') {
+      textarea.value += ' ';
+    } else if (id === 'Tab') {
+      textarea.value += '    ';
+    } else if (id === 'Enter') {
+      textarea.value += '\n';
+    } else {
+      textarea.value += kn.innerText;
     }
-
     anime(kn, cl);
   }
 }
@@ -183,13 +185,34 @@ function mouseHandle(e) {
   printLetter(kn, 'active');
 }
 
-function kbdHandle(e) {
-  e.preventDefault();
-  const kn = document.getElementById(e.code);
+function checkShift(e) {
+  if (e.code !== 'ShiftLeft') {
+    return;
+  }
+  if (e.type === 'keydown' && !e.repeat) {
+    isShift = true;
+  }
+  if (e.type === 'keyup') {
+    console.log('up');
+  }
+  renderKeyboard(keys);
+}
+
+function checkLangSW(e) {
   if (e.code === 'ShiftLeft' && (e.ctrlKey || e.metaKey)) {
     toggleStorageItem('isEnglish');
     renderKeyboard(keys);
   }
+}
+
+function kbdHandle(e) {
+  e.preventDefault();
+  checkShift(e);
+  if (e.type === 'keyup') {
+    return;
+  }
+  checkLangSW(e);
+  const kn = document.getElementById(e.code);
   printLetter(kn, 'tiny');
 }
 
@@ -213,4 +236,5 @@ customElements.define('key-el', Key);
 createKeyboard(desk, keys);
 
 document.addEventListener('keydown', kbdHandle);
+document.addEventListener('keyup', kbdHandle);
 document.addEventListener('click', mouseHandle);
