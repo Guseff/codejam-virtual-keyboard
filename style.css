@@ -1,8 +1,113 @@
-.desk {
+.workspace {
   width: 800px;
   margin: 20px auto;
+}
+
+.workspace textarea {
+  height: 240px;
+}
+
+.desk {
+  height: 250px;
+  margin: 20px auto;
+  padding: 100px 20px 30px 20px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  background-color: darkgray;
+  border-radius: 10px;
+  background: -webkit-gradient(linear, left bottom, left top, from(darkgray), color-stop(80%, darkgray), color-stop(92%, #eee), to(darkgray));
+  background: linear-gradient(to top, darkgray, darkgray 80%, #eee 92%, darkgray 100%);
+}
+
+.row {
+  padding: 0 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.key {
+  margin-top: 5px;
+  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: #e6e6e6;
+  border: 2px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-transition: border-radius 0.3s ease 0s, background 0.2s ease 0s;
+  transition: border-radius 0.3s ease 0s, background 0.2s ease 0s;
+}
+
+.active {
+  background-color: darkolivegreen;
+}
+
+.tiny {
+  background-color: royalblue;
+  border-radius: 20px;
+}
+
+.del {
+  width: 80px;
+}
+
+.tab {
+  width: 60px;
+}
+
+.caps {
+  width: 70px;
+}
+
+.enter {
+  width: 95px;
+}
+
+.l-shift {
+  width: 60px;
+}
+
+.arr-up {
+  margin-left: 12px;
+}
+
+.r-shift {
+  width: 90px;
+  margin-left: 8px;
+}
+
+.service {
+  width: 50px;
+}
+
+.space {
+  width: 300px;
 }
 /*# sourceMappingURL=style.css.map */
