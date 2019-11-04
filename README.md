@@ -5,7 +5,7 @@ Make a virtual keyboard in Vanilla JS from 'empty' html file.
 https://github.com/rolling-scopes-school/tasks/blob/master/tasks/codejam-virtual-keyboard.md
 
 ## What I have made
-- DOM elements generation in index.html file with only <body> tag.
+- DOM elements generation in index.html file with only `<body>` tag.
 - Render virtual keyboard.
 - Highlighting for corresponding virtual key when physical key is pressed.
 - Switching between Russian and English language when RightCtrl + RightShift keys pressed.
