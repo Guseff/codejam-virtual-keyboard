@@ -189,7 +189,7 @@ function checkShift(e) {
   if (e.code !== 'ShiftLeft') {
     return;
   }
-  if (e.type === 'keydown' && !e.repeat) {
+  if (e.type === 'keydown' && !e.repeat && !(e.ctrlKey || e.metaKey)) {
     isShift = true;
   }
   if (e.type === 'keyup') {
