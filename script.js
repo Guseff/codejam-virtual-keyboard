@@ -106,7 +106,7 @@ workspace.append(desk);
 function renderKey(key) {
   let res;
   if (Array.isArray(key.label)) {
-    let isUp = (localStorage.getItem('isCaps') === 'true') !== isShift;
+    const isUp = (localStorage.getItem('isCaps') === 'true') !== isShift;
     if (localStorage.getItem('isEnglish') === 'true') {
       res = isUp ? key.label[0][1] : key.label[0][0];
     } else {
@@ -193,7 +193,7 @@ function checkShift(e) {
     isShift = true;
   }
   if (e.type === 'keyup') {
-    console.log('up');
+    isShift = false;
   }
   renderKeyboard(keys);
 }
